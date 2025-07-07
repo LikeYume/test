@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无限状态线上面试</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .active {
+      display: flex;
+    }
+    input {
+      padding: 8px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 400px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .logo-img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    #markdown-bg {
+      text-align: left;
+      overflow-y: auto;
+      height: 80vh;
+      background: #fff;
+      padding: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Step 1: Welcome -->
+  <div id="step1" class="page active">
+    <img src="https://raw.githubusercontent.com/InfiniteStatesInc/HireWithCode/refs/heads/main/logo.png" alt="无限状态 Logo" class="logo-img" />
+    <p>欢迎来到「无限状态」线上面试环节，期待你的加入！</p>
+  </div>
+
+  <!-- Step 2: Instructions -->
+  <div id="step2" class="page">
+    <div id="markdown-bg">加载中...</div>
+    <button onclick="goToStep(3)">接受挑战</button>
+  </div>
+
+  <!-- Step 3: Accept Challenge -->
+  <div id="step3" class="page">
+    <h2>接受挑战</h2>
+    <form onsubmit="event.preventDefault(); goToStep(4);">
+      <input type="text" name="github" placeholder="你的 GitHub ID" required />
+      <input type="email" name="email" placeholder="你的邮箱地址" required />
+      <button type="submit">开始挑战</button>
+    </form>
+  </div>
+
+  <!-- Step 4: Submit Work -->
+  <div id="step4" class="page">
+    <h2>完成挑战</h2>
+    <form onsubmit="submitChallenge(event)">
+      <input type="url" name="repo" placeholder="GitHub 仓库链接" required />
+      <input type="url" name="vercel" placeholder="Vercel 在线预览地址" required />
+      <button type="submit">提交作品</button>
+    </form>
+  </div>
+
+  <script>
+    function goToStep(stepNumber) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('step' + stepNumber).classList.add('active');
+    }
+
+    function submitChallenge(e) {
+      e.preventDefault();
+      alert("作品已成功提交！");
+      goToStep(1);
+      setTimeout(() => goToStep(2), 2000);
+    }
+
+    setTimeout(() => goToStep(2), 2000);
+
+    fetch('./README.md')
+      .then(res => res.text())
+      .then(md => {
+        document.getElementById('markdown-bg').innerHTML = md
+          .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+          .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+          .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+          .replace(/^\- \[ \] (.*$)/gim, '<li>☐ $1</li>')
+          .replace(/^\- \[x\] (.*$)/gim, '<li>☑ $1</li>')
+          .replace(/^\- (.*$)/gim, '<li>$1</li>')
+          .replace(/\n/g, '<br>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+      });
+  </script>
+
+</body>
+</html>
